@@ -15,6 +15,12 @@ export class FleetUpgrade extends FleetWorker {
             return;
         }
 
+        //TODO: Should check if harvest location is much closer by.
+        const pickupResult = WorkerTask.collectDroppedEnergy(creep);
+        if(pickupResult === OK) {
+            return;
+        }
+
         const harvestResult = WorkerTask.harvest(creep);
         if(harvestResult === OK ) {
             return;
