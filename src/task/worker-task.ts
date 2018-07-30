@@ -41,6 +41,10 @@ export class WorkerTask {
     }
 
     static dumpEnergy(creep: Creep) {
+        if(creep.carry.energy === 0) {
+            return ERR_NOT_ENOUGH_ENERGY;
+        }
+
         const target = Find.closestEnergyDump(creep.pos);
         if(!target) {
             return ERR_NOT_FOUND;
