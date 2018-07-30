@@ -3,7 +3,8 @@ export abstract class Fleet {
     private nextSpawnId = 0;
     private priorityJobs: {[jobId: string]: {job: (creep: Creep) => void} } = {};
 
-    constructor(public fleetName: string, public spawn: StructureSpawn, private minFleetSize: number, private maxFleetSize: number, public parts: BodyPartConstant[]) {
+    constructor(public fleetName: string, public spawn: StructureSpawn, 
+        private minFleetSize: number, private maxFleetSize: number, private parts: BodyPartConstant[]) {
         //TODO: also this: pull outside here and put in some sort of fleet manager. Now I'll get too many loops.
         const creeps = this.getCreeps();
         creeps.forEach(creep => {
@@ -14,6 +15,9 @@ export abstract class Fleet {
             }
 
         });
+
+        this.parts = this.determineBodyParts().sort();
+        
     }
 
     abstract mainFunction(creep: Creep): void;
@@ -123,5 +127,47 @@ export abstract class Fleet {
     any() {
         const creeps = this.getCreeps();
         return creeps.length > 0;
+    }
+
+    private determineBodyParts() {
+        const parts = this.parts.map(part => part);
+        const partsToUpgrade = parts.reduce((upgradeParts, part) => { 
+            if(parts.indexOf(part) > 0) upgradeParts.push(part); 
+            return upgradeParts
+        }, [] as BodyPartConstant[]);
+
+        if(partsToUpgrade.length === 0) {
+            return parts;
+        }
+
+        const maxWorkerCost = this.spawn.room.energyCapacityAvailable < 1000 ? this.spawn.room.energyCapacityAvailable : 1000;
+        let workerCost = this.bodyPartCost(parts);
+        // let nextWorkerCost = workerCost;
+        do {
+            for (let i = 0; i < partsToUpgrade.length; i++) {
+                const part = partsToUpgrade[i];
+                workerCost = this.bodyPartCost(parts.concat(part));
+                if(workerCost > maxWorkerCost) {
+                    break;
+                }
+                parts.push(part);
+            }
+
+        } while(workerCost <= maxWorkerCost)
+
+        return parts;
+    }
+    
+    private bodyPartCost(parts: BodyPartConstant[]) {
+        let cost = 0;
+        parts.forEach(part => {
+            let add = 50;
+            if(part === WORK) {
+                add = 100;
+            }
+            cost = cost + add;
+        });
+
+        return cost;
     }
 }

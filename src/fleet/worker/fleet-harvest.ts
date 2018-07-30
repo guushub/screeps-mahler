@@ -3,8 +3,9 @@ import { Find } from "utils/FindUtils";
 import { WorkerTask } from "task/worker-task";
 
 export class FleetHarvest extends FleetWorker {
-    constructor(spawn: StructureSpawn, minFleetSize: number, maxFleetSize: number) {
-        super(FleetWorkerType.Harvest, spawn, minFleetSize, maxFleetSize);
+    constructor(spawn: StructureSpawn, minFleetSize: number, maxFleetSize: number, canCarry = true) {
+        const parts = canCarry ? [WORK, WORK, CARRY, MOVE] : [WORK, WORK, MOVE, MOVE];
+        super(FleetWorkerType.Harvest, spawn, minFleetSize, maxFleetSize, parts);
     }
 
     mainFunction(creep: Creep) {

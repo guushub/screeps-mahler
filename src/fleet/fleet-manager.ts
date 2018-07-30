@@ -20,10 +20,7 @@ export class FleetManager {
     }
 
     getBuildQueue() {
-        if(!this.buildQueue) {
-            this.updateBuildQueue();
-        }
-
+        this.updateBuildQueue();
         return this.buildQueue;
     }
 
