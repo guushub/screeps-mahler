@@ -132,7 +132,7 @@ export abstract class Fleet {
     private determineBodyParts() {
         const parts = this.parts.map(part => part);
         const partsToUpgrade = parts.reduce((upgradeParts, part) => { 
-            if(parts.indexOf(part) > 0) upgradeParts.push(part); 
+            if(upgradeParts.indexOf(part) < 0) upgradeParts.push(part); 
             return upgradeParts
         }, [] as BodyPartConstant[]);
 
