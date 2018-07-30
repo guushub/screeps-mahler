@@ -1,6 +1,6 @@
 import { Count } from "utils/CountUtils";
 
-export const buildExtensionSites = (spawn: StructureSpawn) => {
+export const constructExtensions = (spawn: StructureSpawn) => {
     const baseCoord = [spawn.pos.x, spawn.pos.y];
     const controller = spawn.room.controller;
     const coords: [number, number][] = [];

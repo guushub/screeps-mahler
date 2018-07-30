@@ -3,7 +3,7 @@ import { FleetManager, BuildPriority } from "fleet/fleet-manager";
 import { FleetHarvest } from "fleet/worker/fleet-harvest"
 import { FleetUpgrade } from "fleet/worker/fleet-upgrade";
 import { FleetBuild } from "fleet/worker/fleet-build";
-import { buildExtensionSites } from "construction/construct-extension";
+import { constructExtensions } from "construction/construct-extension";
 import { FleetCourierEnergy } from "fleet/courier/fleet-courier-energy";
 
 const spawnMain = Game.spawns["Spawn1"];
@@ -57,7 +57,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   fleetManager.loop();
   if(spawnMain.room.controller && spawnMain.room.controller.level > 1) {
-    buildExtensionSites(spawnMain);
+    constructExtensions(spawnMain);
   }
 });
 
