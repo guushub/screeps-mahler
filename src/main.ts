@@ -9,7 +9,6 @@ import { FleetCourierEnergy } from "fleet/courier/fleet-courier-energy";
 const spawnMain = Game.spawns["Spawn1"];
 const fleetManager = new FleetManager(spawnMain);
 
-
 // Harvesters
 const harvestFleet = new FleetHarvest(spawnMain, 2, 2, false);
 fleetManager.addFleet({
@@ -26,7 +25,6 @@ fleetManager.addFleet({
   rclLevel: 0
 });
 
-
 // Upgraders
 const upgradeFleet = new FleetUpgrade(spawnMain, 3, 3);
 fleetManager.addFleet({
@@ -34,7 +32,6 @@ fleetManager.addFleet({
   buildPriority: BuildPriority.NORMAL,
   rclLevel: 0
 });
-
 
 // Builders
 if(spawnMain.room.controller && spawnMain.room.controller.level > 1) {

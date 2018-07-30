@@ -13,10 +13,20 @@ export class FleetHarvest extends FleetWorker {
 
     mainFunction(creep: Creep) {
 
-        const harvestResult = WorkerTask.harvest(creep);
+        let assignedSource: string = (creep.memory as any).source;
+        if(!this.canCarry && !assignedSource) {
+            const assignedSource = this.getSourceWithoutHarvester(creep);
+            (creep.memory as any).source = assignedSource;
+        }
+
+        const harvestResult = WorkerTask.harvest(creep, assignedSource);
         if(harvestResult === OK) {
             return;
         }
+
+        if(assignedSource && harvestResult === ERR_NOT_FOUND) {
+            (creep.memory as any).source = "";
+        }       
 
         if(this.canCarry) {
             const dumpResult = WorkerTask.dumpEnergy(creep);
@@ -31,6 +41,40 @@ export class FleetHarvest extends FleetWorker {
 
             }
         }
+
+    }
+
+    private getSourceWithoutHarvester(creep: Creep) {
+        const sources = creep.room.find(FIND_SOURCES);
+        if(!sources || sources.length === 0) {
+            return "";
+        }
+
+        const sourcesInUse = creep.room.find(FIND_CREEPS).reduce((sourceIds, creepInRoom) => { 
+            if(!creepInRoom.my) {
+                return sourceIds;
+            }
+            const sourceAttached = (creepInRoom.memory as any).source;
+            if(sourceAttached) {
+                sourceIds.push(sourceAttached);
+            }
+            return sourceIds;
+        }, [] as string[]);
+
+        if(!sourcesInUse || sourcesInUse.length === 0) {
+            // No sources in use yet, so use the first.
+            return sources[0].id;
+        }
+
+        for (let i = 0; i < sources.length; i++) {
+            const source = sources[i];
+            if(sourcesInUse.indexOf(source.id) < 0 ) {
+                return source.id;
+            }
+        }
+
+        // No unused source found
+        return "";
 
     }
 }

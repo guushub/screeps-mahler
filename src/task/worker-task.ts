@@ -2,17 +2,15 @@ import { Find } from "utils/FindUtils";
 
 export class WorkerTask {
 
-    static harvest(creep: Creep) {
+    static harvest(creep: Creep, assignedSource?: string) {
         if(creep.carryCapacity !== 0 && creep.carry.energy === creep.carryCapacity) {
             return ERR_FULL;
         }
 
-        const source = creep.pos.findClosestByPath(FIND_SOURCES);
-        (creep.memory as any).source = source;
+        const source = assignedSource ? Game.getObjectById(assignedSource) as Source : creep.pos.findClosestByPath(FIND_SOURCES);
         if(!source) {
             return ERR_NOT_FOUND;
         }
-
 
         const harvestResult = creep.harvest(source);
         if(harvestResult === ERR_NOT_IN_RANGE) {
@@ -23,12 +21,12 @@ export class WorkerTask {
         return harvestResult;
     }
 
-    static collectDroppedEnergy(creep: Creep) {
+    static collectDroppedEnergy(creep: Creep, assignedSource?: string) {
         if(creep.carry.energy === creep.carryCapacity) {
             return ERR_FULL;
         }
 
-        const resource = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+        const resource = assignedSource ? Game.getObjectById(assignedSource) as Resource : creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
         if(!resource) {
             return ERR_NOT_FOUND;
         }
