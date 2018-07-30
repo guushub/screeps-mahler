@@ -110,9 +110,9 @@ export abstract class Fleet {
 
         return spawnResult;
     }
-
-    //TODO: should be possible with property this.creeps.
+    
     getCreeps(){
+        //TODO: Keep it spawn or room based, not all creeps in game. 
         const creeps = Object.keys(Game.creeps)
             .reduce((resultingCreeps, name) => {
                 const creep = Game.creeps[name];

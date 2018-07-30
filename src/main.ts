@@ -12,6 +12,8 @@ const spawnMain = Game.spawns["Spawn1"];
 const fleetManager = new FleetManager(spawnMain);
 
 // Harvesters
+//TODO: As long as there are no couriers, harvest should carry.
+//TODO: nHarversters = nSources.
 const harvestFleet = new FleetHarvest(spawnMain, 2, 2, false);
 fleetManager.addFleet({
   fleet: harvestFleet,
