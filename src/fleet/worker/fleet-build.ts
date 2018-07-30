@@ -16,6 +16,11 @@ export class FleetBuild extends FleetWorker {
             return;
         }
 
+        const pickupResult = WorkerTask.collectDroppedEnergy(creep);
+        if(pickupResult === OK) {
+            return;
+        }
+
         const harvestResult = WorkerTask.harvest(creep);
         if(harvestResult === OK) {
             return;

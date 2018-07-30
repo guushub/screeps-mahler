@@ -2,13 +2,13 @@ import { Find } from "utils/FindUtils";
 
 export class WorkerTask {
 
-    // Returns boolean wether this task is succesful
     static harvest(creep: Creep) {
-        if(creep.carry.energy === creep.carryCapacity) {
+        if(creep.carryCapacity !== 0 && creep.carry.energy === creep.carryCapacity) {
             return ERR_FULL;
         }
 
         const source = creep.pos.findClosestByPath(FIND_SOURCES);
+        (creep.memory as any).source = source;
         if(!source) {
             return ERR_NOT_FOUND;
         }
@@ -21,6 +21,25 @@ export class WorkerTask {
         }
 
         return harvestResult;
+    }
+
+    static collectDroppedEnergy(creep: Creep) {
+        if(creep.carry.energy === creep.carryCapacity) {
+            return ERR_FULL;
+        }
+
+        const resource = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+        if(!resource) {
+            return ERR_NOT_FOUND;
+        }
+
+        const pickupResult = creep.pickup(resource);
+        if(pickupResult === ERR_NOT_IN_RANGE) {
+            const moveResult = this.moveToTask(creep, resource);
+            return moveResult;
+        }
+
+        return pickupResult;
     }
 
     static dumpEnergy(creep: Creep) {
@@ -39,7 +58,15 @@ export class WorkerTask {
     }
 
     static build(creep: Creep) {
-        const target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+        // Give extensions priority to build, because we want those for better creeps.
+        const extensions = creep.room.find(FIND_CONSTRUCTION_SITES).filter(site => site.structureType === STRUCTURE_EXTENSION);
+        let target: ConstructionSite | null;
+        if(extensions.length > 0) {
+            target = extensions[0];
+        } else {
+            target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+        }
+
         if(!target) {
             return ERR_NOT_FOUND;
         }
