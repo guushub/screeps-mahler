@@ -8,6 +8,8 @@ export class FleetCourierEnergy extends FleetCourier {
     }
 
     mainFunction(creep: Creep) {
+        
+        WorkerTask.repairRoad(creep);
 
         const dumpResult = WorkerTask.dumpEnergy(creep);
         if(dumpResult === OK) {

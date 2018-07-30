@@ -7,9 +7,11 @@ export class FleetUpgrade extends FleetWorker {
     }
 
     mainFunction(creep: Creep) {
+        WorkerTask.repairRoad(creep);
+
         const upgradeResult = WorkerTask.upgrade(creep);
         if(upgradeResult === OK) {
-            WorkerTask.buildRoadSite(creep);
+            // WorkerTask.buildRoadSite(creep);
             return;
         }
 
@@ -17,7 +19,7 @@ export class FleetUpgrade extends FleetWorker {
         if(harvestResult === OK ) {
             return;
         }
-
+        
         const dumpResult = WorkerTask.dumpEnergy(creep);
         if(dumpResult !== OK) {
 

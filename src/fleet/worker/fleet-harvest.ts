@@ -29,9 +29,10 @@ export class FleetHarvest extends FleetWorker {
         }       
 
         if(this.canCarry) {
+            WorkerTask.repairRoad(creep);
             const dumpResult = WorkerTask.dumpEnergy(creep);
             if(dumpResult === OK) {
-                WorkerTask.buildRoadSite(creep);
+                // WorkerTask.buildRoadSite(creep);
                 return;
             }
 

@@ -3,8 +3,10 @@ import { FleetManager, BuildPriority } from "fleet/fleet-manager";
 import { FleetHarvest } from "fleet/worker/fleet-harvest"
 import { FleetUpgrade } from "fleet/worker/fleet-upgrade";
 import { FleetBuild } from "fleet/worker/fleet-build";
-import { constructExtensions } from "construction/construct-extension";
 import { FleetCourierEnergy } from "fleet/courier/fleet-courier-energy";
+
+import { constructExtensions } from "construction/construct-extension";
+import { constructRoadNetworkIntraRoom } from "construction/construct-road-network";
 
 const spawnMain = Game.spawns["Spawn1"];
 const fleetManager = new FleetManager(spawnMain);
@@ -55,6 +57,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
   }
 
+  constructRoadNetworkIntraRoom(spawnMain.room);
   fleetManager.loop();
   if(spawnMain.room.controller && spawnMain.room.controller.level > 1) {
     constructExtensions(spawnMain);
