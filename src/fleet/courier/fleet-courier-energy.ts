@@ -14,6 +14,11 @@ export class FleetCourierEnergy extends FleetCourier {
             return;
         }
 
+        if(dumpResult === ERR_NOT_FOUND && creep.carry.energy === creep.carryCapacity) {
+            WorkerTask.moveToTask(creep, this.spawn);
+            return;
+        }
+
         let assignedSource: string = (creep.memory as any).resource;
         if(!assignedSource) {
             const assignedSource = this.getResourceWithoutCourier(creep);

@@ -147,7 +147,7 @@ export class WorkerTask {
         return repairResults;
     }
 
-    private static moveToTask(creep: Creep, target: RoomPosition | {pos: RoomPosition}) {
+    static moveToTask(creep: Creep, target: RoomPosition | {pos: RoomPosition}) {
         const moveResult = creep.moveTo(target);
         //{ visualizePathStyle: { stroke: '#ffffff' }
         return moveResult === ERR_TIRED ? OK : moveResult;
