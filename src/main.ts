@@ -4,6 +4,7 @@ import { FleetHarvest } from "fleet/worker/fleet-harvest"
 import { FleetUpgrade } from "fleet/worker/fleet-upgrade";
 import { FleetBuild } from "fleet/worker/fleet-build";
 import { buildExtensionSites } from "construction/construct-extension";
+import { FleetCourierEnergy } from "fleet/courier/fleet-courier-energy";
 
 const spawnMain = Game.spawns["Spawn1"];
 const fleetManager = new FleetManager(spawnMain);
@@ -16,6 +17,15 @@ fleetManager.addFleet({
   buildPriority: BuildPriority.VERY_HIGH,
   rclLevel: 0
 });
+
+// Couriers
+const energyCourierFleet = new FleetCourierEnergy(spawnMain, 2, 2);
+fleetManager.addFleet({
+  fleet: energyCourierFleet,
+  buildPriority: BuildPriority.VERY_HIGH,
+  rclLevel: 0
+});
+
 
 // Upgraders
 const upgradeFleet = new FleetUpgrade(spawnMain, 3, 3);
