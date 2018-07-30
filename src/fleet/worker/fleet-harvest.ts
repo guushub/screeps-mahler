@@ -12,10 +12,10 @@ export class FleetHarvest extends FleetWorker {
     }
 
     mainFunction(creep: Creep) {
-
-        let assignedSource: string = (creep.memory as any).source;
-        if(!this.canCarry && !assignedSource) {
-            const assignedSource = this.getSourceWithoutHarvester(creep);
+        const canCarry = this.parts.indexOf(CARRY) > -1;
+        let assignedSource: string = canCarry ? "" : (creep.memory as any).source;
+        if(!canCarry && !assignedSource) {
+            assignedSource = this.getSourceWithoutHarvester(creep);
             (creep.memory as any).source = assignedSource;
         }
 
@@ -28,7 +28,7 @@ export class FleetHarvest extends FleetWorker {
             (creep.memory as any).source = "";
         }       
 
-        if(this.canCarry) {
+        if(canCarry) {
             WorkerTask.repairRoad(creep);
             const dumpResult = WorkerTask.dumpEnergy(creep);
             if(dumpResult === OK) {
