@@ -14,7 +14,13 @@ const fleetManager = new FleetManager(spawnMain);
 // Harvesters
 //TODO: As long as there are no couriers, harvest should carry.
 //TODO: nHarversters = nSources.
-const harvestFleet = new FleetHarvest(spawnMain, 2, 2, false);
+const nHarvesters = spawnMain.room.find(FIND_SOURCES).length;
+//fallback for when all creeps suddenly dissappear (usually because of a mistake).
+const nCreepsInGame = Object.keys(Game.creeps).length;
+const canCarry = nCreepsInGame ? false : true;
+const maxHarvesterCost = nCreepsInGame ? 1000 : 300;
+
+const harvestFleet = new FleetHarvest(spawnMain, nHarvesters, nHarvesters, canCarry, maxHarvesterCost);
 fleetManager.addFleet({
   fleet: harvestFleet,
   buildPriority: BuildPriority.VERY_HIGH,

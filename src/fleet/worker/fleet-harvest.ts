@@ -5,14 +5,16 @@ import { WorkerTask } from "task/worker-task";
 export class FleetHarvest extends FleetWorker {
     canCarry: boolean;
 
-    constructor(spawn: StructureSpawn, minFleetSize: number, maxFleetSize: number, canCarry = true) {
+    constructor(spawn: StructureSpawn, minFleetSize: number, maxFleetSize: number, canCarry = true, maxUnitCost = 1000) {
         const parts = canCarry ? [WORK, WORK, CARRY, MOVE] : [WORK, WORK, MOVE, MOVE];
-        super(FleetWorkerType.Harvest, spawn, minFleetSize, maxFleetSize, parts);
+        super(FleetWorkerType.Harvest, spawn, minFleetSize, maxFleetSize, parts, maxUnitCost);
         this.canCarry = canCarry;
     }
 
     mainFunction(creep: Creep) {
         const canCarry = this.parts.indexOf(CARRY) > -1;
+        creep.say(`${canCarry ? "Carry!" : "No carry!"}`);
+
         let assignedSource: string = canCarry ? "" : (creep.memory as any).source;
         if(!canCarry && !assignedSource) {
             assignedSource = this.getSourceWithoutHarvester(creep);
@@ -27,6 +29,8 @@ export class FleetHarvest extends FleetWorker {
         if(assignedSource && harvestResult === ERR_NOT_FOUND) {
             (creep.memory as any).source = "";
         }       
+
+
 
         if(canCarry) {
             WorkerTask.repairRoad(creep);

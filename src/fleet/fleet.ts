@@ -1,10 +1,10 @@
 export abstract class Fleet {
 
     private nextSpawnId = 0;
-    private priorityJobs: {[jobId: string]: {job: (creep: Creep) => void} } = {};
+    priorityJobs: {[jobId: string]: {job: (creep: Creep) => void} } = {};
 
     constructor(public fleetName: string, public spawn: StructureSpawn, 
-        private minFleetSize: number, private maxFleetSize: number, public parts: BodyPartConstant[]) {
+        public minFleetSize: number, public maxFleetSize: number, public parts: BodyPartConstant[], public maxUnitCost = 1000) {
         //TODO: also this: pull outside here and put in some sort of fleet manager. Now I'll get too many loops.
         const creeps = this.getCreeps();
         creeps.forEach(creep => {
@@ -140,7 +140,7 @@ export abstract class Fleet {
             return parts;
         }
 
-        const maxWorkerCost = this.spawn.room.energyCapacityAvailable < 1000 ? this.spawn.room.energyCapacityAvailable : 1000;
+        const maxWorkerCost = this.spawn.room.energyCapacityAvailable < this.maxUnitCost ? this.spawn.room.energyCapacityAvailable : this.maxUnitCost;
         let workerCost = this.bodyPartCost(parts);
         // let nextWorkerCost = workerCost;
         do {

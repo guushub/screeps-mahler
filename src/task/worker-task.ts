@@ -1,5 +1,6 @@
 import { Find } from "utils/FindUtils";
 
+//TODO: check for enemies before moving to work.
 export class WorkerTask {
 
     static harvest(creep: Creep, assignedSource?: string) {

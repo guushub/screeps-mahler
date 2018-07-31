@@ -4,8 +4,8 @@ import { WorkerTask } from "task/worker-task";
 
 export class FleetBuild extends FleetWorker {
 
-    constructor(spawn: StructureSpawn, minFleetSize: number, maxFleetSize: number) {
-        super(FleetWorkerType.Build, spawn, minFleetSize, maxFleetSize);
+    constructor(spawn: StructureSpawn, minFleetSize: number, maxFleetSize: number, maxUnitCost = 1000) {
+        super(FleetWorkerType.Build, spawn, minFleetSize, maxFleetSize, [WORK, WORK, CARRY, MOVE], maxUnitCost);
     }
 
     mainFunction(creep: Creep) {
