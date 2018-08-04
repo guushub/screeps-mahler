@@ -82,6 +82,11 @@ export const loop = ErrorMapper.wrapLoop(() => {
     energyCourierFleet.changeMaxUnitCost(1000);
   }
 
+  if(energyCourierFleet.fleetSize() > 0) {
+    harvestFleet.canCarry = false;
+  }
+
+
   fleetManager.loop();
   if(spawnMain.room.controller && spawnMain.room.controller.level > 1) {
     constructExtensions(spawnMain);
