@@ -12,6 +12,7 @@ export class FleetManager {
         this.runFleets();
 
         const buildQueue = this.getBuildQueue();
+        (Game.spawns["Spawn1"].memory as any).buildQueue = buildQueue;
         // if(buildQueue) console.log(buildQueue.map(fleetInfo => fleetInfo.fleet.fleetName).join(" - "));
         if(buildQueue && buildQueue.length > 0) {
             const fleetToReinforce = buildQueue[0].fleet;

@@ -39,6 +39,28 @@ export const constructRoadNetworkIntraRoom = (room: Room) => {
 
 }
 
+// export const constructRoadToRoom = (room: Room) => {
+//     let roomsInNetwork: string[] = (room.memory as any).roomsInNetwork ? (room.memory as any).roomsInNetwork : [];
+//     const roomExits = Game.map.describeExits(room.name) as {[exitKey: string]: string};
+//     const roomsToConnect = Object.keys(roomExits).reduce((rooms, exitKey) => {
+//         if(!roomExits.hasOwnProperty(exitKey)) {
+//             return rooms;
+//         }
+//         const roomName = roomExits[exitKey]
+//         if(roomsInNetwork.indexOf(roomName) < 0) {
+//             rooms.push(roomName)
+//         }
+
+//         return rooms;
+//     }, [] as string[]);
+    
+//     if(roomsToConnect.length === 0) {
+//         return ERR_NO_PATH;
+//     }
+    
+
+// }
+
 const pathToRoadSites = (path: PathStep[], room: Room) => {
     for (let i = 0; i < path.length; i++) {
         const step = path[i];

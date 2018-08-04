@@ -16,11 +16,11 @@ const fleetManager = new FleetManager(spawnMain);
 //TODO: nHarversters = nSources.
 const nHarvesters = spawnMain.room.find(FIND_SOURCES).length;
 //fallback for when all creeps suddenly dissappear (usually because of a mistake).
-const nCreepsInGame = Object.keys(Game.creeps).length;
-const canCarry = nCreepsInGame ? false : true;
-const maxHarvesterCost = nCreepsInGame ? 1000 : 300;
+// const nCreepsInGame = Object.keys(Game.creeps).length;
+// const canCarry = nCreepsInGame ? false : true;
+// const maxHarvesterCost = nCreepsInGame ? 1000 : 300;
 
-const harvestFleet = new FleetHarvest(spawnMain, nHarvesters, nHarvesters, canCarry, maxHarvesterCost);
+const harvestFleet = new FleetHarvest(spawnMain, nHarvesters, nHarvesters);//, canCarry, maxHarvesterCost);
 fleetManager.addFleet({
   fleet: harvestFleet,
   buildPriority: BuildPriority.VERY_HIGH,
@@ -28,7 +28,7 @@ fleetManager.addFleet({
 });
 
 // Couriers
-const energyCourierFleet = new FleetCourierEnergy(spawnMain, 2, 2);
+const energyCourierFleet = new FleetCourierEnergy(spawnMain, nHarvesters, nHarvesters);
 fleetManager.addFleet({
   fleet: energyCourierFleet,
   buildPriority: BuildPriority.VERY_HIGH,
@@ -66,6 +66,22 @@ export const loop = ErrorMapper.wrapLoop(() => {
   }
 
   constructRoadNetworkIntraRoom(spawnMain.room);
+
+  const nCreepsInGame = Object.keys(Game.creeps).length;
+  if(nCreepsInGame === 0) {
+    harvestFleet.changeFleetSize(1);
+    harvestFleet.changeMaxUnitCost(300);
+    energyCourierFleet.changeFleetSize(1);
+    energyCourierFleet.changeMaxUnitCost(300);
+  }
+
+  if(energyCourierFleet.fleetSize() > 0 && harvestFleet.fleetSize() > 0) {
+    harvestFleet.changeFleetSize(nHarvesters);
+    harvestFleet.changeMaxUnitCost(1000);
+    energyCourierFleet.changeFleetSize(nHarvesters);
+    energyCourierFleet.changeMaxUnitCost(1000);
+  }
+
   fleetManager.loop();
   if(spawnMain.room.controller && spawnMain.room.controller.level > 1) {
     constructExtensions(spawnMain);

@@ -1,5 +1,4 @@
 import { FleetWorker, FleetWorkerType } from "./fleet-worker";
-import { Find } from "utils/FindUtils";
 import { WorkerTask } from "task/worker-task";
 
 export class FleetHarvest extends FleetWorker {
@@ -12,8 +11,7 @@ export class FleetHarvest extends FleetWorker {
     }
 
     mainFunction(creep: Creep) {
-        const canCarry = this.parts.indexOf(CARRY) > -1;
-        creep.say(`${canCarry ? "Carry!" : "No carry!"}`);
+        const canCarry = creep.body.some(part => part.type === CARRY);
 
         let assignedSource: string = canCarry ? "" : (creep.memory as any).source;
         if(!canCarry && !assignedSource) {
