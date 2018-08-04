@@ -7,6 +7,7 @@ export class FleetUpgrade extends FleetWorker {
     }
 
     mainFunction(creep: Creep) {
+        this.extendRoad(creep);
         WorkerTask.repairRoad(creep);
 
         const upgradeResult = WorkerTask.upgrade(creep);

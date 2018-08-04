@@ -8,7 +8,7 @@ export class FleetCourierEnergy extends FleetCourier {
     }
 
     mainFunction(creep: Creep) {
-        
+        this.extendRoad(creep);
         WorkerTask.repairRoad(creep);
 
         const dumpResult = WorkerTask.dumpEnergy(creep);

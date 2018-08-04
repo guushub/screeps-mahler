@@ -1,3 +1,5 @@
+import { WorkerTask } from "task/worker-task";
+
 export abstract class Fleet {
 
     private nextSpawnId = 0;
@@ -180,5 +182,22 @@ export abstract class Fleet {
         });
 
         return cost;
+    }
+    
+    extendRoad(creep: Creep) { 
+        let previousRoadMoves = (creep.memory as any).nRoadMoves;
+        const structuresAtPos = creep.pos.lookFor(LOOK_STRUCTURES);
+        const offRoad = !structuresAtPos || !structuresAtPos.some(structure => structure.structureType === STRUCTURE_ROAD);
+        if(!offRoad) {
+            (creep.memory as any).nRoadMoves = previousRoadMoves ? previousRoadMoves + 1 : 1;
+        } 
+
+        // Probably a busy road, so good idea to build a piece.
+        if(offRoad && (creep.memory as any).nRoadMoves > 2) {
+            const buildRoadResult = WorkerTask.buildRoadSite(creep);
+            if(buildRoadResult === OK) {
+                (creep.memory as any).nRoadMoves = 0;
+            }
+        }
     }
 }

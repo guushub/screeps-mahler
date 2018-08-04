@@ -12,7 +12,7 @@ export class FleetHarvest extends FleetWorker {
 
     mainFunction(creep: Creep) {
         const canCarry = creep.body.some(part => part.type === CARRY);
-        
+
         if(!(creep.memory as any).isDumping) {
             let assignedSource: string = canCarry ? "" : (creep.memory as any).source;
             if(!canCarry && !assignedSource) {
@@ -33,6 +33,8 @@ export class FleetHarvest extends FleetWorker {
                 (creep.memory as any).source = "";
             }       
         } else if(canCarry) {
+            // Keep roads healthy
+            this.extendRoad(creep);
             WorkerTask.repairRoad(creep);
             const dumpResult = WorkerTask.dumpEnergy(creep);
             if(dumpResult === OK) {
