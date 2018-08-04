@@ -5,7 +5,7 @@ export abstract class Fleet {
 
     constructor(public fleetName: string, public spawn: StructureSpawn, 
         public minFleetSize: number, public maxFleetSize: number, 
-        public parts: BodyPartConstant[], public maxUnitCost = 1000) {
+        public baseParts: BodyPartConstant[], public maxUnitCost = 1000) {
         //TODO: also this: pull outside here and put in some sort of fleet manager. Now I'll get too many loops.
         const creeps = this.getCreeps();
         creeps.forEach(creep => {
@@ -17,7 +17,7 @@ export abstract class Fleet {
 
         });
 
-        this.parts = this.determineBodyParts().sort();
+        //this.parts = this.determineBodyParts().sort();
         
     }
 
@@ -110,7 +110,8 @@ export abstract class Fleet {
     //TODO: Creat some sort of queue logic. ESB? :-p
     private spawnCreep() {
         const creepName = this.getCreepName();
-        const spawnResult = this.spawn.spawnCreep(this.parts, creepName, {
+        const parts = this.determineBodyParts().sort();
+        const spawnResult = this.spawn.spawnCreep(parts, creepName, {
             memory: {fleetName: this.fleetName}
         });
         if(spawnResult >= 0) {
@@ -140,7 +141,7 @@ export abstract class Fleet {
     }
 
     private determineBodyParts() {
-        const parts = this.parts.map(part => part);
+        const parts = this.baseParts.map(part => part);
         const partsToUpgrade = parts.reduce((upgradeParts, part) => { 
             if(upgradeParts.indexOf(part) < 0) upgradeParts.push(part); 
             return upgradeParts

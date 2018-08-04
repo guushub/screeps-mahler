@@ -12,37 +12,43 @@ export class FleetHarvest extends FleetWorker {
 
     mainFunction(creep: Creep) {
         const canCarry = creep.body.some(part => part.type === CARRY);
+        
+        if(!(creep.memory as any).isDumping) {
+            let assignedSource: string = canCarry ? "" : (creep.memory as any).source;
+            if(!canCarry && !assignedSource) {
+                assignedSource = this.getSourceWithoutHarvester(creep);
+                (creep.memory as any).source = assignedSource;
+            }
 
-        let assignedSource: string = canCarry ? "" : (creep.memory as any).source;
-        if(!canCarry && !assignedSource) {
-            assignedSource = this.getSourceWithoutHarvester(creep);
-            (creep.memory as any).source = assignedSource;
-        }
+            const harvestResult = WorkerTask.harvest(creep, assignedSource);
+            if(harvestResult === OK) {
+                return;
+            }
 
-        const harvestResult = WorkerTask.harvest(creep, assignedSource);
-        if(harvestResult === OK) {
-            return;
-        }
+            if(harvestResult === ERR_FULL && canCarry) {
+                (creep.memory as any).isDumping = true;
+            }
 
-        if(assignedSource && harvestResult === ERR_NOT_FOUND) {
-            (creep.memory as any).source = "";
-        }       
-
-
-
-        if(canCarry) {
+            if(assignedSource && harvestResult === ERR_NOT_FOUND) {
+                (creep.memory as any).source = "";
+            }       
+        } else if(canCarry) {
             WorkerTask.repairRoad(creep);
             const dumpResult = WorkerTask.dumpEnergy(creep);
             if(dumpResult === OK) {
                 // WorkerTask.buildRoadSite(creep);
                 return;
             }
-
-            // As fallback, help with building!
-            const buildResult = WorkerTask.build(creep);
-            if(buildResult !== OK) {
-
+            
+            if(dumpResult === ERR_NOT_ENOUGH_ENERGY) {
+                (creep.memory as any).isDumping = false;
+                return;
             }
+            // // As fallback, help with building!
+            // const buildResult = WorkerTask.build(creep);
+            // if(buildResult !== OK) {
+
+            // }
         }
 
     }
