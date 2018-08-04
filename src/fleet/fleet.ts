@@ -194,10 +194,8 @@ export abstract class Fleet {
 
         // Probably a busy road, so good idea to build a piece.
         if(offRoad && (creep.memory as any).nRoadMoves > 2) {
-            const buildRoadResult = WorkerTask.buildRoadSite(creep);
-            if(buildRoadResult === OK) {
-                (creep.memory as any).nRoadMoves = 0;
-            }
+            (creep.memory as any).nRoadMoves = 0;
+            WorkerTask.buildRoadSite(creep);
         }
     }
 }
