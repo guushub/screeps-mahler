@@ -7,29 +7,42 @@ export class FleetUpgrade extends FleetWorker {
     }
 
     mainFunction(creep: Creep) {
-        this.extendRoad(creep);
+        // this.extendRoad(creep);
         WorkerTask.repairRoad(creep);
 
-        const upgradeResult = WorkerTask.upgrade(creep);
-        if(upgradeResult === OK) {
-            // WorkerTask.buildRoadSite(creep);
-            return;
-        }
+        if((creep.memory as any).isUpgrading) {
+            const upgradeResult = WorkerTask.upgrade(creep);
+            if(upgradeResult === OK) {
+                // WorkerTask.buildRoadSite(creep);
+                return;
+            }
 
-        //TODO: Should check if harvest location is much closer by.
-        const pickupResult = WorkerTask.collectDroppedEnergy(creep);
-        if(pickupResult === OK) {
-            return;
-        }
+            if(upgradeResult === ERR_NOT_ENOUGH_ENERGY) {
+                (creep.memory as any).isUpgrading = false;
+                return;
+            }
 
-        const harvestResult = WorkerTask.harvest(creep);
-        if(harvestResult === OK ) {
-            return;
-        }
-        
-        const dumpResult = WorkerTask.dumpEnergy(creep);
-        if(dumpResult !== OK) {
+         } else {
+            //TODO: Should check if harvest location is much closer by.
+            const pickupResult = WorkerTask.collectDroppedEnergy(creep);
+            if(pickupResult === OK) {
+                return;
+            }
 
+            const harvestResult = WorkerTask.harvest(creep);
+            if(harvestResult === OK ) {
+                return;
+            }
+
+            if(harvestResult === ERR_FULL || pickupResult === ERR_FULL) {
+                (creep.memory as any).isUpgrading = true;
+                return;
+            }
+            
+            const dumpResult = WorkerTask.dumpEnergy(creep);
+            if(dumpResult !== OK) {
+
+            }
         }
     }
 

@@ -11,29 +11,43 @@ export class FleetBuild extends FleetWorker {
     mainFunction(creep: Creep) {
         // const constructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
         // const adjacentConstructionSite = this.adjacentConstructionSite(creep);
-        const buildResult = WorkerTask.build(creep);
-        if(buildResult === OK) {
-            return;
-        }
 
-        const pickupResult = WorkerTask.collectDroppedEnergy(creep);
-        if(pickupResult === OK) {
-            return;
-        }
+        if((creep.memory as any).isBuilding) {
+            const buildResult = WorkerTask.build(creep);
+            if(buildResult === OK) {
+                return;
+            }
 
-        const harvestResult = WorkerTask.harvest(creep);
-        if(harvestResult === OK) {
-            return;
-        }
+            if(buildResult === ERR_NOT_ENOUGH_ENERGY) {
+                (creep.memory as any).isBuilding = false;
+                return;
+            }
 
-        const upgradeTask = WorkerTask.upgrade(creep);
-        if(upgradeTask === OK) {
-            return;
-        }
+        } else {
+            const pickupResult = WorkerTask.collectDroppedEnergy(creep);
+            if(pickupResult === OK) {
+                return;
+            }
 
-        const dumpResult = WorkerTask.dumpEnergy(creep);
-        if(dumpResult !== OK) {
+            const harvestResult = WorkerTask.harvest(creep);
+            if(harvestResult === OK) {
+                return;
+            }
 
+            if(harvestResult === ERR_FULL || pickupResult === ERR_FULL) {
+                (creep.memory as any).isBuilding = true;
+                return;
+            }
+
+            const upgradeTask = WorkerTask.upgrade(creep);
+            if(upgradeTask === OK) {
+                return;
+            }
+
+            const dumpResult = WorkerTask.dumpEnergy(creep);
+            if(dumpResult !== OK) {
+
+            }
         }
     }
 }

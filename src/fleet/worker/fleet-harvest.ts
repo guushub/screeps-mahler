@@ -2,12 +2,12 @@ import { FleetWorker, FleetWorkerType } from "./fleet-worker";
 import { WorkerTask } from "task/worker-task";
 
 export class FleetHarvest extends FleetWorker {
-    canCarry: boolean;
+    //canCarry: boolean;
 
     constructor(spawn: StructureSpawn, minFleetSize: number, maxFleetSize: number, canCarry = true, maxUnitCost = 1000) {
         const parts = canCarry ? [WORK, WORK, CARRY, MOVE] : [WORK, WORK, MOVE, MOVE];
         super(FleetWorkerType.Harvest, spawn, minFleetSize, maxFleetSize, parts, maxUnitCost);
-        this.canCarry = canCarry;
+        //this.canCarry = canCarry;
     }
 
     mainFunction(creep: Creep) {
@@ -34,7 +34,7 @@ export class FleetHarvest extends FleetWorker {
             }       
         } else if(canCarry) {
             // Keep roads healthy
-            this.extendRoad(creep);
+            // this.extendRoad(creep);
             WorkerTask.repairRoad(creep);
             const dumpResult = WorkerTask.dumpEnergy(creep);
             if(dumpResult === OK) {

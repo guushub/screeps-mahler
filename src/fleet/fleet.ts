@@ -192,10 +192,16 @@ export abstract class Fleet {
             (creep.memory as any).nRoadMoves = previousRoadMoves ? previousRoadMoves + 1 : 1;
         } 
 
+
         // Probably a busy road, so good idea to build a piece.
         if(offRoad && (creep.memory as any).nRoadMoves > 2) {
-            (creep.memory as any).nRoadMoves = 0;
-            WorkerTask.buildRoadSite(creep);
+            // Only build when no site near, so roads wont get spammed.
+            const sitesInRange = creep.pos.findInRange(FIND_CONSTRUCTION_SITES, 2, {filter: (site: ConstructionSite) => site.structureType === STRUCTURE_ROAD});
+           
+            if(!sitesInRange || sitesInRange.length === 0) {
+                (creep.memory as any).nRoadMoves = 0;
+                WorkerTask.buildRoadSite(creep);
+            }
         }
     }
 }

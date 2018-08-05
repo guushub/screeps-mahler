@@ -8,6 +8,8 @@ import { FleetCourierEnergy } from "fleet/courier/fleet-courier-energy";
 import { constructExtensions } from "construction/construct-extension";
 import { constructRoadNetworkIntraRoom } from "construction/construct-road-network";
 
+import { Find } from "./utils/FindUtils";
+
 const spawnMain = Game.spawns["Spawn1"];
 const fleetManager = new FleetManager(spawnMain);
 
@@ -82,8 +84,10 @@ export const loop = ErrorMapper.wrapLoop(() => {
     energyCourierFleet.changeMaxUnitCost(1000);
   }
 
-  if(energyCourierFleet.fleetSize() > 0) {
-    harvestFleet.canCarry = false;
+  if(energyCourierFleet.fleetSize() > 0 && harvestFleet.baseParts.some(part => part === CARRY)) {
+    //harvestFleet.canCarry = false;
+    //TODO: fleetmanager should do this stuff.
+    harvestFleet.baseParts = [MOVE, MOVE, WORK, WORK];
   }
 
 
@@ -91,5 +95,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
   if(spawnMain.room.controller && spawnMain.room.controller.level > 1) {
     constructExtensions(spawnMain);
   }
+
+  Find.emptySpacesInRange(spawnMain.room, spawnMain.pos, 1);
 });
 

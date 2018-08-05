@@ -78,13 +78,13 @@ export class WorkerTask {
             return ERR_NOT_ENOUGH_ENERGY;
         }
 
-        if(!creep.pos.inRangeTo(target, 3) && creep.carry.energy < creep.carryCapacity) {
-            // This could mean:
-            // - It's harvesting and energy source is not next to target
-            // - It lost some energy on the way to target
-            // - Or the target disappeared
-            return ERR_NOT_ENOUGH_ENERGY;
-        }
+        // if(!creep.pos.inRangeTo(target, 3) && creep.carry.energy < creep.carryCapacity) {
+        //     // This could mean:
+        //     // - It's harvesting and energy source is not next to target
+        //     // - It lost some energy on the way to target
+        //     // - Or the target disappeared
+        //     return ERR_NOT_ENOUGH_ENERGY;
+        // }
 
         const buildResult = creep.build(target);
         if(buildResult === ERR_NOT_IN_RANGE) {
@@ -107,13 +107,13 @@ export class WorkerTask {
             return ERR_NOT_ENOUGH_ENERGY;
         }
 
-        if(!creep.pos.inRangeTo(target, 3) && creep.carry.energy < creep.carryCapacity) {
-            // This could mean:
-            // - It's harvesting and energy source is not next to target
-            // - It lost some energy on the way to target
-            // - Or the target disappeared
-            return ERR_NOT_ENOUGH_ENERGY;
-        }
+        // if(!creep.pos.inRangeTo(target, 3) && creep.carry.energy < creep.carryCapacity) {
+        //     // This could mean:
+        //     // - It's harvesting and energy source is not next to target
+        //     // - It lost some energy on the way to target
+        //     // - Or the target disappeared
+        //     return ERR_NOT_ENOUGH_ENERGY;
+        // }
 
         const upgradeResult = creep.upgradeController(target);
         if(upgradeResult === ERR_NOT_IN_RANGE) {
