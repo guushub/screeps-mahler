@@ -60,15 +60,32 @@ export class WorkerTask {
         return transferResult;
     }
 
+    static dropResource(creep: Creep, target: RoomPosition, resourceType: ResourceConstant, exact: boolean) {
+        if(creep.carry.energy === 0) {
+            return ERR_NOT_ENOUGH_ENERGY;
+        }
+
+        if((!exact && creep.pos.isNearTo(target)) || creep.pos.isEqualTo(target)) {
+            const dropResult = creep.drop(resourceType);
+            return dropResult;
+        }
+
+        const moveResult = this.moveToTask(creep, target);
+        return moveResult;
+        
+    }
+
     static build(creep: Creep) {
         // Give extensions priority to build, because we want those for better creeps.
-        const extensions = creep.room.find(FIND_CONSTRUCTION_SITES).filter(site => site.structureType === STRUCTURE_EXTENSION);
+        const extensions = creep.room.find(FIND_CONSTRUCTION_SITES).filter(site => site.structureType !== STRUCTURE_ROAD && site.structureType !== STRUCTURE_RAMPART && site.structureType !== STRUCTURE_WALL);
         let target: ConstructionSite | null;
         if(extensions.length > 0) {
             target = extensions[0];
         } else {
             target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
         }
+
+        (creep.memory as any).assignment = target;
 
         if(!target) {
             return ERR_NOT_FOUND;

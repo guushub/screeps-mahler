@@ -9,6 +9,7 @@ import { constructExtensions } from "construction/construct-extension";
 import { constructRoadNetworkIntraRoom } from "construction/construct-road-network";
 
 import { Find } from "./utils/FindUtils";
+import { constructContainers } from "construction/construct-energy-storage";
 
 const spawnMain = Game.spawns["Spawn1"];
 const fleetManager = new FleetManager(spawnMain);
@@ -95,6 +96,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
   if(spawnMain.room.controller && spawnMain.room.controller.level > 1) {
     constructExtensions(spawnMain);
   }
+
+  constructContainers(spawnMain.room);
 
   Find.emptySpacesInRange(spawnMain.room, spawnMain.pos, 1);
 });

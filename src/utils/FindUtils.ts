@@ -50,4 +50,27 @@ export class Find {
 
         return;
     }
+
+    static emptySpacesInRange(room: Room, pos: RoomPosition, range: number) {
+        const stuffInRange = room.lookAtArea(pos.y - range, pos.x - range, pos.y + range, pos.x + range, false);
+        const emptySpaces: RoomPosition[] = [];
+        for (const y in stuffInRange) {
+            if (stuffInRange.hasOwnProperty(y)) {
+                const cols = stuffInRange[y];
+                for (const x in cols) {
+                    if (cols.hasOwnProperty(x)) {
+                        const results = cols[x];
+                        const hasBuilding = results.some(result => result.type === "constructionSite" || result.type === "structure")
+                        if(!hasBuilding) {
+                            const emptyPos = new RoomPosition(Number(x), Number(y), room.name);
+                            emptySpaces.push(emptyPos);
+                        }
+                    }
+                }
+                
+            }
+        }
+        // const spaceInRange = stuffInRange.filter()
+        return emptySpaces;
+    }
 }

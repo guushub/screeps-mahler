@@ -1,5 +1,6 @@
 import { FleetCourier, FleetCourierType } from "./fleet-courier";
 import { WorkerTask } from "task/worker-task";
+import { FleetWorkerType } from "../worker/fleet-worker";
 
 export class FleetCourierEnergy extends FleetCourier {
 
@@ -14,6 +15,28 @@ export class FleetCourierEnergy extends FleetCourier {
         const dumpResult = WorkerTask.dumpEnergy(creep);
         if(dumpResult === OK) {
             return;
+        }
+
+        // Bring energy to a construction site
+        const builders = creep.room.find(FIND_MY_CREEPS, {filter: (creep) => (creep.memory as any).fleetName === FleetWorkerType.Build});
+        if(builders && builders.length > 0) {
+            for (let i = 0; i < builders.length; i++) {
+                const builder = builders[i];
+                const assignment: ConstructionSite = (builder.memory as any).assignment;
+                if(assignment) {
+                    const assignmentPosition = new RoomPosition(assignment.pos.x, assignment.pos.y, assignment.pos.roomName);
+                    const energyAtAssignment = assignmentPosition.lookFor(RESOURCE_ENERGY);
+                    const droppedEnergy = energyAtAssignment.length > 0 ? energyAtAssignment[0].amount : 0;
+                    if(assignment.progressTotal - assignment.progress - droppedEnergy > 0) {
+                        (creep.memory as any).assignment = assignment;
+                        const dropResult = WorkerTask.dropResource(creep, assignmentPosition, RESOURCE_ENERGY, true);
+                        (creep.memory as any).dropResult = dropResult;
+                        if(dropResult === OK) {
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         if(dumpResult === ERR_NOT_FOUND && creep.carry.energy === creep.carryCapacity) {
@@ -41,7 +64,20 @@ export class FleetCourierEnergy extends FleetCourier {
     }
 
     getResourceWithoutCourier(creep: Creep) {
-        const resources = creep.room.find(FIND_DROPPED_RESOURCES);
+        const sources = creep.room.find(FIND_SOURCES);
+        const resources = sources.reduce((resourcesNearSource, source) => {
+            const areaAroundSource = creep.room.lookAtArea(source.pos.y - 1, source.pos.x - 1, source.pos.y + 1, source.pos.x + 1, true);
+            const posWithResources = areaAroundSource.filter(pos => pos.resource);
+            posWithResources.forEach(pos => {
+                if(pos.resource) {
+                    resourcesNearSource.push(pos.resource);
+                }
+            });
+                            
+            return resourcesNearSource;
+        }, [] as Resource[]);
+
+        // const resources = creep.room.find(FIND_DROPPED_RESOURCES);
         if(!resources || resources.length === 0) {
             return "";
         }
