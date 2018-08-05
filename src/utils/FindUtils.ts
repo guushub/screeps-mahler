@@ -31,24 +31,40 @@ export class Find {
     }
 
     static closestEnergyDump(pos: RoomPosition) {
-        const target = pos.findClosestByPath(FIND_STRUCTURES, {
+        const targetPriority = pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType === STRUCTURE_EXTENSION ||
-                    structure.structureType === STRUCTURE_SPAWN ||
-                    structure.structureType === STRUCTURE_TOWER) &&
-                    structure.energy < structure.energyCapacity;
+                return (
+                    (structure.structureType === STRUCTURE_EXTENSION ||
+                    structure.structureType === STRUCTURE_SPAWN) &&
+                    structure.energy < structure.energyCapacity);
             }
         });
 
-        if(target && (
-            target.structureType === STRUCTURE_EXTENSION ||
-            target.structureType === STRUCTURE_SPAWN ||
-            target.structureType === STRUCTURE_TOWER
-        )) {
-            return target;
+        if(targetPriority) {
+            return targetPriority
         }
 
-        return;
+
+        const targetSecondary = pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return structure.structureType === STRUCTURE_TOWER &&
+                        structure.energy < structure.energyCapacity;
+            }
+        });
+
+        if(targetSecondary) {
+            return targetSecondary;
+        }
+
+        //FIXME: only works properly if there's only energy in container
+        const targetFallback = pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return structure.structureType === STRUCTURE_CONTAINER &&
+                        structure.store.energy < structure.storeCapacity;
+            }
+        });
+
+        return targetFallback;
     }
 
     static emptySpacesInRange(room: Room, pos: RoomPosition, range: number) {

@@ -23,7 +23,12 @@ export class FleetUpgrade extends FleetWorker {
             }
 
          } else {
-            //TODO: Should check if harvest location is much closer by.
+            //TODO: Should check which place with resource is much closer by.
+            const withdrawResult = WorkerTask.collectStoredEnergy(creep);
+            if(withdrawResult === OK) {
+                return;
+            }
+
             const pickupResult = WorkerTask.collectDroppedEnergy(creep);
             if(pickupResult === OK) {
                 return;

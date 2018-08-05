@@ -41,6 +41,25 @@ export class WorkerTask {
         return pickupResult;
     }
 
+    static collectStoredEnergy(creep: Creep, assignedSource?: string) {
+        if(creep.carry.energy === creep.carryCapacity) {
+            return ERR_FULL;
+        }
+
+        const container = assignedSource ? Game.getObjectById(assignedSource) as StructureContainer : creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (struct) => struct.structureType === STRUCTURE_CONTAINER && struct.store.energy > 0});
+        if(!container) {
+            return ERR_NOT_FOUND;
+        }
+
+        const pickupResult = creep.withdraw(container, RESOURCE_ENERGY);
+        if(pickupResult === ERR_NOT_IN_RANGE) {
+            const moveResult = this.moveToTask(creep, container);
+            return moveResult;
+        }
+
+        return pickupResult;
+    }
+
     static dumpEnergy(creep: Creep) {
         if(creep.carry.energy === 0) {
             return ERR_NOT_ENOUGH_ENERGY;
@@ -154,6 +173,37 @@ export class WorkerTask {
         // }
         const buildRoadSiteResult = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
         return buildRoadSiteResult;
+    }
+
+    static repairStructures(creep: Creep) {
+        const target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: (structure) => structure.hits < structure.hitsMax });
+        if(!target) {
+            return ERR_NOT_FOUND;
+        }
+        const repairResult = creep.repair(target);
+        if(repairResult === ERR_NOT_IN_RANGE) {
+            const moveResult = this.moveToTask(creep, target);
+            //{ visualizePathStyle: { stroke: '#ffffff' }
+            return moveResult;
+        }
+
+        return repairResult;
+    }
+
+    static repairContainers(creep: Creep) {
+        const target = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (structure) => structure.structureType === STRUCTURE_CONTAINER && structure.hits < structure.hitsMax });
+        if(!target) {
+            return ERR_NOT_FOUND;
+        }
+
+        const repairResult = creep.repair(target);
+        if(repairResult === ERR_NOT_IN_RANGE) {
+            const moveResult = this.moveToTask(creep, target);
+            //{ visualizePathStyle: { stroke: '#ffffff' }
+            return moveResult;
+        }
+
+        return repairResult;
     }
 
     static repairRoad(creep: Creep) {

@@ -18,12 +18,26 @@ export class FleetBuild extends FleetWorker {
                 return;
             }
 
-            if(buildResult === ERR_NOT_ENOUGH_ENERGY) {
-                (creep.memory as any).isBuilding = false;
+            let repairResult = WorkerTask.repairStructures(creep);
+            if(repairResult === OK) {
                 return;
             }
 
+            repairResult = WorkerTask.repairContainers(creep);
+            if(repairResult === OK) {
+                return;
+            }
+
+            if(creep.carry.energy === 0) {
+                (creep.memory as any).isBuilding = false;
+            }
+
         } else {
+            const withdrawResult = WorkerTask.collectStoredEnergy(creep);
+            if(withdrawResult === OK) {
+                return;
+            }
+
             const pickupResult = WorkerTask.collectDroppedEnergy(creep);
             if(pickupResult === OK) {
                 return;
